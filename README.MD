@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ### Hello world
 <<<<<<< HEAD
 =======
@@ -16,3 +17,6 @@
 >>>>>>> ce3c389 (ok)
 =======
 >>>>>>> 0b0ed50 (git push -u origin software
+=======
+#### Hello world
+>>>>>>> ce3c389 (ok)
