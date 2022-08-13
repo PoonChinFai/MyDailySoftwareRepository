@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+              android:layout_height="match_parent" android:orientation="vertical">
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="143dp">
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="79dp"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/time_request" android:layout_weight="1" android:hint="时间"/>
+        <Button
+                android:text="add_date"
+                android:layout_width="wrap_content"
+                android:layout_height="77dp" android:id="@+id/add_date" android:layout_weight="1"
+                android:onClick="add_date"/>
+    </LinearLayout>
+    <Button
+            android:text="delete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/button2" android:onClick="delete_data"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="188dp" android:id="@+id/dataDisplay" android:clickable="true"
+            tools:onClick="display" android:hint="数据为空"/>
+</LinearLayout>
