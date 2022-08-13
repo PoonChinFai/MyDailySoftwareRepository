@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 ### Hello world
+<<<<<<< HEAD
 =======
 >>>>>>> a75886c (Update README.MD)
 =======
@@ -13,3 +14,5 @@
 =======
 #### Hello world
 >>>>>>> ce3c389 (ok)
+=======
+>>>>>>> 0b0ed50 (git push -u origin software
