@@ -1,0 +1,9 @@
+# view AndroidManifest.xml #generated:19
+-keep class com.sleeptask.MainActivity { <init>(...); }
+
+# onClick res/layout/activity_main.xml #generated:23
+-keepclassmembers class * { *** add_date(...); }
+
+# onClick res/layout/activity_main.xml #generated:33
+-keepclassmembers class * { *** delete_data(...); }
+

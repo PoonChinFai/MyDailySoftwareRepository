@@ -1,5 +1,7 @@
 package com.sleeptask;
 
+//import com.sleeptask.R;
+//import android.R;
 import android.app.Activity;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
@@ -9,9 +11,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import androidx.annotation.RequiresApi;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Date;
 
 public class MainActivity extends Activity {
@@ -208,12 +216,12 @@ public class MainActivity extends Activity {
 		winmanage.window.removeView(task_prompt);
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.N)
+	
 	public void timeManager() {
 
 
 		SimpleDateFormat dateformat = new SimpleDateFormat("HHmmss");
-		int timeformat = Integer.parseInt(dateformat.format(new Date()));
+	final	int timeformat = Integer.parseInt(dateformat.format(new Date()));
 
 		new Thread(new Runnable() {
 			@Override
