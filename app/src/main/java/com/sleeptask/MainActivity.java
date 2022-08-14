@@ -1,7 +1,5 @@
 package com.sleeptask;
 
-//import com.sleeptask.R;
-//import android.R;
 import android.app.Activity;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
@@ -21,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import android.content.Context;
 
 public class MainActivity extends Activity {
 
@@ -40,6 +39,7 @@ public class MainActivity extends Activity {
 	WindowManage winmanage;
 	TextView task_prompt;
 
+	Context context;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -54,9 +54,9 @@ public class MainActivity extends Activity {
 		task_prompt.setText("该睡觉了");
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			timeManager();
-			toast("正在运行");
+			ToastPrompt.	toast("正在运行");
 		} else {
-			toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
+			ToastPrompt.	toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
 		}
 		//	dataDisplay();
 		//fileManager();
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
 	public void display(View v) {
 
 		datalist = fileManager();
-		toast("666");
+		ToastPrompt.	toast("666");
 		dataDisplay.setText(datalist);
 
 
@@ -111,29 +111,29 @@ public class MainActivity extends Activity {
 
 	public void dataDisplay() {
 		new Thread(new Runnable() {//五秒自动刷新数据
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				while (true) {
+					while (true) {
 
-					datalist = fileManager();
+						datalist = fileManager();
 
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
+						runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
 
-							dataDisplay.setText(datalist);
+									dataDisplay.setText(datalist);
+								}
+							});
+						try {
+							Thread.sleep(5 * 1000);
+						} catch (InterruptedException e) {
+							throw new RuntimeException(e);
 						}
-					});
-					try {
-						Thread.sleep(5 * 1000);
-					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
 					}
-				}
 
-			}
-		}).start();
+				}
+			}).start();
 
 	}
 
@@ -143,10 +143,10 @@ public class MainActivity extends Activity {
 
 		write_data = new BufferedWriter(new OutputStreamWriter(file_output));
 		if (time_data.equals("")) {
-			toast("时间为空");
+			ToastPrompt.toast("时间为空");
 		} else if (!time_data.equals("")) {
 
-			toast("加入成功,时间为" + time_data);
+			ToastPrompt. toast("加入成功,时间为" + time_data);
 			try {
 				write_data.write(time_data);
 				write_data.newLine();
@@ -163,9 +163,9 @@ public class MainActivity extends Activity {
 
 		if (getFile().exists()) {
 			getFile().delete();
-			toast("删除成功");
+			ToastPrompt.	toast("删除成功");
 		} else {
-			toast("文件夹为空");
+			ToastPrompt.	toast("文件夹为空");
 		}
 	}
 
@@ -196,7 +196,7 @@ public class MainActivity extends Activity {
 			read_data = new BufferedReader(new InputStreamReader(file_input));
 			String exist_data = null;
 			exist_data = read_data.readLine();
-			if (exist_data == null) toast("未配置时间");
+			if (exist_data == null) ToastPrompt.toast("未配置时间");
 
 		} catch (FileNotFoundException e) {
 			System.out.println("171");
@@ -216,63 +216,51 @@ public class MainActivity extends Activity {
 		winmanage.window.removeView(task_prompt);
 	}
 
-	
+
 	public void timeManager() {
 
 
-		SimpleDateFormat dateformat = new SimpleDateFormat("HHmmss");
-	final	int timeformat = Integer.parseInt(dateformat.format(new Date()));
+		final SimpleDateFormat dateformat = new SimpleDateFormat("HHmmss");
+
 
 		new Thread(new Runnable() {
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
 
-				while (true) {
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
+					while (true) {
+						runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									final	int timeformat = Integer.parseInt(dateformat.format(new Date()));
+									if (timeformat == 105200) {
+										openSuspension();
+									}
+									if (timeformat >= 105500) {
+										closeSuspension();
+									}
 
-							if (timeformat == 213000) {
-								openSuspension();
-							}
-							if (timeformat == 073000) {
-								closeSuspension();
-							}
-
+								}
+							});
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							throw new RuntimeException(e);
 						}
-					});
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
 					}
+
+
 				}
-
-
-			}
-		}).start();
+			}).start();
 	}
 
 
-	public void toast(final String prompt) {
-		new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-
-
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						Toast.makeText(MainActivity.this, prompt, Toast.LENGTH_SHORT).show();
-
-					}
-				});
-			}
-		}).start();
-
+	public Context context() {
+		context = this;
+		return context;
 	}
+
+
 
 } 
