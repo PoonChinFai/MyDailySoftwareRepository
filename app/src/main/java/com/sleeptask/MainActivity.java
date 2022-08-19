@@ -1,6 +1,7 @@
 package com.sleeptask;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Date;
-import android.content.Context;
 
 public class MainActivity extends Activity {
 
@@ -39,28 +38,37 @@ public class MainActivity extends Activity {
 	WindowManage winmanage;
 	TextView task_prompt;
 
-	Context context;
+	//Context context;
+	ToastPrompt toastPrompt ;
+	Intent intent;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		time_request = findViewById(R.id.time_request);
 		dataDisplay = findViewById(R.id.dataDisplay);
+		
+		toastPrompt=new ToastPrompt(this);
 		databaseInit();
-		winmanage = new WindowManage();
-		winmanage.WindowManage(this);
-		task_prompt = new TextView(this);
-		task_prompt.setTextColor(Color.BLACK);
-		task_prompt.setText("该睡觉了");
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+		//winmanage = new WindowManage();
+		//winmanage.WindowManage(this);
+		//intent=new Intent(this,BossServer.class);
+		
+	//	task_prompt = new TextView(this);
+		
+	
+		//task_prompt.setTextColor(Color.BLACK);
+		//task_prompt.setText("该睡觉了");
+		
+	/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 			timeManager();
-			ToastPrompt.	toast("正在运行");
+			toastPrompt.	toast("正在运行");
 		} else {
-			ToastPrompt.	toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
+			toastPrompt.	toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
 		}
 		//	dataDisplay();
 		//fileManager();
-
+*/
 	}
 
 	public File getDirectory() {//获取文件夹
@@ -103,7 +111,8 @@ public class MainActivity extends Activity {
 	public void display(View v) {
 
 		datalist = fileManager();
-		ToastPrompt.	toast("666");
+		
+		toastPrompt.	toast("666");
 		dataDisplay.setText(datalist);
 
 
@@ -137,16 +146,25 @@ public class MainActivity extends Activity {
 
 	}
 
+	
+	public void openService(View v){
+		
+		startService(intent);
+	}
+	public void closeService(View v){
+		
+		stopService(intent);
+	}
 	public void add_date(View v) {
 
 		String time_data = time_request.getText().toString();
 
 		write_data = new BufferedWriter(new OutputStreamWriter(file_output));
 		if (time_data.equals("")) {
-			ToastPrompt.toast("时间为空");
+			toastPrompt.toast("时间为空");
 		} else if (!time_data.equals("")) {
 
-			ToastPrompt. toast("加入成功,时间为" + time_data);
+			toastPrompt. toast("加入成功,时间为" + time_data);
 			try {
 				write_data.write(time_data);
 				write_data.newLine();
@@ -163,9 +181,9 @@ public class MainActivity extends Activity {
 
 		if (getFile().exists()) {
 			getFile().delete();
-			ToastPrompt.	toast("删除成功");
+			toastPrompt.	toast("删除成功");
 		} else {
-			ToastPrompt.	toast("文件夹为空");
+			toastPrompt.	toast("文件夹为空");
 		}
 	}
 
@@ -196,7 +214,7 @@ public class MainActivity extends Activity {
 			read_data = new BufferedReader(new InputStreamReader(file_input));
 			String exist_data = null;
 			exist_data = read_data.readLine();
-			if (exist_data == null) ToastPrompt.toast("未配置时间");
+			if (exist_data == null) toastPrompt.toast("未配置时间");
 
 		} catch (FileNotFoundException e) {
 			System.out.println("171");
@@ -204,6 +222,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	
 	public void getDate() {
 
 	}
@@ -256,10 +275,7 @@ public class MainActivity extends Activity {
 
 
 
-	public Context context() {
-		context = this;
-		return context;
-	}
+
 
 
 

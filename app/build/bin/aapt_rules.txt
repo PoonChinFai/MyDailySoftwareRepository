@@ -4,6 +4,12 @@
 # onClick res/layout/activity_main.xml #generated:23
 -keepclassmembers class * { *** add_date(...); }
 
+# onClick res/layout/activity_main.xml #generated:53
+-keepclassmembers class * { *** closeService(...); }
+
 # onClick res/layout/activity_main.xml #generated:33
 -keepclassmembers class * { *** delete_data(...); }
+
+# onClick res/layout/activity_main.xml #generated:47
+-keepclassmembers class * { *** openService(...); }
 
