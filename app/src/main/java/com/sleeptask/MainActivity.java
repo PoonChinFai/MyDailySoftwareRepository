@@ -47,12 +47,12 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		time_request = findViewById(R.id.time_request);
 		dataDisplay = findViewById(R.id.dataDisplay);
-		
+		BossServer bossserver=new BossServer(this);
 		toastPrompt=new ToastPrompt(this);
 		databaseInit();
 		//winmanage = new WindowManage();
 		//winmanage.WindowManage(this);
-		//intent=new Intent(this,BossServer.class);
+		intent=new Intent(this,BossServer.class);
 		
 	//	task_prompt = new TextView(this);
 		
