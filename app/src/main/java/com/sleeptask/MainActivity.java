@@ -1,6 +1,7 @@
 package com.sleeptask;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
@@ -20,10 +21,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Date;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity  {
 
+
+
+	//-----------------------
 	String file_name = "/storage/emulated/0/SleepTask/SleepTask.txt";
 	String directory_name = "/storage/emulated/0/SleepTask";
+	//---------------------
 	File directory;//文件夹引用
 	File file;//文件引用
 	EditText time_request;//编辑框
@@ -32,44 +37,59 @@ public class MainActivity extends Activity {
 	BufferedReader read_data;
 	BufferedWriter write_data;
 
-	TextView dataDisplay;
+	TextView dateDisplay;
 	String datalist;
 	String exist_data;
 	WindowManage winmanage;
 	TextView task_prompt;
-
-	//Context context;
-	ToastPrompt toastPrompt ;
+	BossServer bossserver;
+	ToastPrompt toastPrompt;
+	
 	Intent intent;
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)  {
 		super.onCreate(savedInstanceState);
+		//--------------///
 		setContentView(R.layout.activity_main);
 		time_request = findViewById(R.id.time_request);
-		dataDisplay = findViewById(R.id.dataDisplay);
-		BossServer bossserver=new BossServer(this);
-		toastPrompt=new ToastPrompt(this);
+		dateDisplay = findViewById(R.id.dateDisplay);
+		//--------------
+
+
+		
+		bossserver = new BossServer(this);
+		toastPrompt = new ToastPrompt(this);
+		new TimeManager(this);
+		winmanage = new WindowManage();
+		winmanage.WindowManage(this);
+		//-----------------
+
+		//--------------------
+		intent = new Intent(this, BossServer.class);
+		task_prompt = new TextView(this);
+		task_prompt.setTextColor(Color.BLACK);
+		task_prompt.setText("该睡觉了");
+		//---------------
+
 		databaseInit();
-		//winmanage = new WindowManage();
-		//winmanage.WindowManage(this);
-		intent=new Intent(this,BossServer.class);
-		
-	//	task_prompt = new TextView(this);
-		
-	
-		//task_prompt.setTextColor(Color.BLACK);
-		//task_prompt.setText("该睡觉了");
-		
-	/*	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			timeManager();
-			toastPrompt.	toast("正在运行");
+
+
+
+		dataDisplay();
+		//	new publicEvent(this).	publicEvent("frereopwir");
+		//-----------------
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			//timeManager();
+			//toastPrompt.toast("正在运行");
 		} else {
 			toastPrompt.	toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
 		}
 		//	dataDisplay();
 		//fileManager();
-*/
+
 	}
+
+
 
 	public File getDirectory() {//获取文件夹
 		directory = new File(directory_name);
@@ -88,18 +108,22 @@ public class MainActivity extends Activity {
 		try {
 
 
-			FileInputStream selectdata = new FileInputStream(file_name);
-			read_data = new BufferedReader(new InputStreamReader(selectdata));
+
+			read_data = new BufferedReader(new InputStreamReader(file_input));
 
 
-			while (true) {
-				if ((exist_data = read_data.readLine()) != null) {
-					break;
-				}
 
+			if ((exist_data = read_data.readLine()) != null) {
+				toastPrompt.toast("Data is  already loaded ");
+			} else {
 
-				for (int i = 0; i <= 9; i++) if (i > 9) break;
+				read_data.reset();
 			}
+			//else if((exist_data=read_data.readLine()).equals(" ")){toastPrompt.toast("nul");}
+
+
+
+
 		} catch (IOException e) {
 		}
 
@@ -111,9 +135,9 @@ public class MainActivity extends Activity {
 	public void display(View v) {
 
 		datalist = fileManager();
-		
+
 		toastPrompt.	toast("666");
-		dataDisplay.setText(datalist);
+		dateDisplay.setText(datalist);
 
 
 	}
@@ -125,13 +149,14 @@ public class MainActivity extends Activity {
 
 					while (true) {
 
-						datalist = fileManager();
+
 
 						runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
 
-									dataDisplay.setText(datalist);
+									datalist = fileManager();
+									dateDisplay.setText(datalist);
 								}
 							});
 						try {
@@ -146,17 +171,24 @@ public class MainActivity extends Activity {
 
 	}
 
-	
-	public void openService(View v){
-		
-		startService(intent);
+
+	public void openService(View v) {
+		new Thread(new Runnable(){
+
+				@Override
+				public void run() {
+					startService(intent);
+				}
+			});
+
 	}
-	public void closeService(View v){
-		
+	public void closeService(View v) {
+
 		stopService(intent);
 	}
-	public void add_date(View v) {
 
+	public void add_date(View v) {
+		if (!getFile().exists())databaseInit();
 		String time_data = time_request.getText().toString();
 
 		write_data = new BufferedWriter(new OutputStreamWriter(file_output));
@@ -164,7 +196,7 @@ public class MainActivity extends Activity {
 			toastPrompt.toast("时间为空");
 		} else if (!time_data.equals("")) {
 
-			toastPrompt. toast("加入成功,时间为" + time_data);
+
 			try {
 				write_data.write(time_data);
 				write_data.newLine();
@@ -172,8 +204,10 @@ public class MainActivity extends Activity {
 			} catch (IOException e) {
 			}
 
+			toastPrompt. toast("加入成功,时间为" + time_data);
 
 		}
+
 
 	}
 
@@ -208,21 +242,27 @@ public class MainActivity extends Activity {
 				}
 
 			}
+			
 			file_input = new FileInputStream(file_name);
-			file_output = new FileOutputStream(file_name);
+
+			file_output = new FileOutputStream(file_name, true);
+
 
 			read_data = new BufferedReader(new InputStreamReader(file_input));
 			String exist_data = null;
+
 			exist_data = read_data.readLine();
+
+
 			if (exist_data == null) toastPrompt.toast("未配置时间");
 
 		} catch (FileNotFoundException e) {
-			System.out.println("171");
+
 		} catch (IOException e) {
 		}
 	}
 
-	
+
 	public void getDate() {
 
 	}
@@ -255,7 +295,7 @@ public class MainActivity extends Activity {
 									if (timeformat == 105200) {
 										openSuspension();
 									}
-									if (timeformat >= 105500) {
+									if (timeformat == 105500) {
 										closeSuspension();
 									}
 
@@ -271,6 +311,13 @@ public class MainActivity extends Activity {
 
 				}
 			}).start();
+	}
+
+	@Override
+	protected void onDestroy() {
+		startService(intent);
+		super.onDestroy();
+
 	}
 
 

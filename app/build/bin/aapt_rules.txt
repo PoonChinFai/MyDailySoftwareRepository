@@ -1,15 +1,18 @@
-# view AndroidManifest.xml #generated:25
+# view AndroidManifest.xml #generated:24
 -keep class com.sleeptask.MainActivity { <init>(...); }
 
 # onClick res/layout/activity_main.xml #generated:23
 -keepclassmembers class * { *** add_date(...); }
 
-# onClick res/layout/activity_main.xml #generated:53
+# onClick res/layout/activity_main.xml #generated:54
 -keepclassmembers class * { *** closeService(...); }
 
 # onClick res/layout/activity_main.xml #generated:33
 -keepclassmembers class * { *** delete_data(...); }
 
-# onClick res/layout/activity_main.xml #generated:47
+# onClick res/layout/activity_main.xml #generated:40
+-keepclassmembers class * { *** display(...); }
+
+# onClick res/layout/activity_main.xml #generated:48
 -keepclassmembers class * { *** openService(...); }
 
