@@ -1,28 +1,40 @@
 package com.sleeptask;
 import android.content.BroadcastReceiver;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.PowerManager;
 
-public class TimeManager extends BroadcastReceiver {
+public class TimeManager  {
 
+	public BroadcastReceiver broadcast;
 	Context context;
 	int countdown=0;
+	PowerManager screen_control;
+	PowerManager.WakeLock screen_lock;
 	
-	@Override
-	public void onReceive(Context p1, Intent p2) {
-	
-		PowerManager screen_control=(PowerManager)p1.getSystemService(Context.POWER_SERVICE);
-		if(Intent.ACTION_SCREEN_OFF.equals(p2.getAction())){
-			timeManager();
-		}
-	}
 	public TimeManager(Context context){
 		this.context=context;
+		
 	
+		broadcast = new BroadcastReceiver(){
+
+	
+			@Override
+			public void onReceive(Context p1, Intent p2) {
+				temporary();
+			}
+
+		
+		};
+		screen_control=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
+		screen_lock=screen_control.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,"tag");
 		
 	}
 
+	public void temporary(){
+		new ToastPrompt(context).toast("Broadcast");
+	}
 
 	/*
 	 BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -55,7 +67,7 @@ public class TimeManager extends BroadcastReceiver {
 				   while(true){
 				   try {
 				
-					   if(countdown>=(10*60))
+					   if(countdown>=(1*60))screen_lock.release();
 					   countdown++;
 					   Thread.sleep(1000);
 				   } catch (InterruptedException e) {}
@@ -66,7 +78,7 @@ public class TimeManager extends BroadcastReceiver {
   
 	/*
 	 PowerManager pm = (PowerManager) MyApplication.mContext.getSystemService(Context.POWER_SERVICE);
-	 wakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "TAG");
+	 wakeLock = pm.newWakeLock(, "TAG");
 	 wakeLock.acquire();//保持屏幕常亮
 	 // wakeLock.acquire(30*1000);//保持屏幕常亮30s
 

@@ -1,8 +1,8 @@
 package com.sleeptask;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Date;
+import android.content.BroadcastReceiver;
 
 public class MainActivity extends Activity  {
 
@@ -44,8 +45,16 @@ public class MainActivity extends Activity  {
 	TextView task_prompt;
 	BossServer bossserver;
 	ToastPrompt toastPrompt;
+	TimeManager timemanager;
 	
 	Intent intent;
+	
+	
+	IntentFilter filter = new IntentFilter();
+	
+
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)  {
 		super.onCreate(savedInstanceState);
@@ -59,9 +68,10 @@ public class MainActivity extends Activity  {
 		
 		bossserver = new BossServer(this);
 		toastPrompt = new ToastPrompt(this);
-		new TimeManager(this);
+		//new TimeManager(this);
 		winmanage = new WindowManage();
 		winmanage.WindowManage(this);
+		timemanager=new TimeManager(this);
 		//-----------------
 
 		//--------------------
@@ -69,10 +79,13 @@ public class MainActivity extends Activity  {
 		task_prompt = new TextView(this);
 		task_prompt.setTextColor(Color.BLACK);
 		task_prompt.setText("该睡觉了");
+		filter.addAction(Intent.ACTION_SCREEN_OFF);
+		
 		//---------------
 
 		databaseInit();
-
+		registerReceiver(timemanager.broadcast, filter);
+		
 
 
 		dataDisplay();
@@ -254,7 +267,7 @@ public class MainActivity extends Activity  {
 			exist_data = read_data.readLine();
 
 
-			if (exist_data == null) toastPrompt.toast("未配置时间");
+			if (exist_data == null);// toastPrompt.toast("未配置时间");
 
 		} catch (FileNotFoundException e) {
 

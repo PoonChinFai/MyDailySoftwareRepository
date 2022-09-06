@@ -15,10 +15,6 @@ public final class R {
         public static final int colorPrimary=0x7f030000;
         public static final int colorPrimaryDark=0x7f030001;
     }
-	public static final class icon{
-		
-		
-	}
     public static final class id {
         public static final int activitymainLinearLayout1=0x7f060000;
         public static final int add_date=0x7f060002;

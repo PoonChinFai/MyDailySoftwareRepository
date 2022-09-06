@@ -1,4 +1,4 @@
-# view AndroidManifest.xml #generated:24
+# view AndroidManifest.xml #generated:27
 -keep class com.sleeptask.MainActivity { <init>(...); }
 
 # onClick res/layout/activity_main.xml #generated:23
