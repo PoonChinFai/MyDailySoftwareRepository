@@ -8,7 +8,7 @@ import android.media.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 
-public  class Role implements ButtonActor
+public  class Role 
 {
 	
 
@@ -21,19 +21,6 @@ public  class Role implements ButtonActor
 
 	ImageButton imageButton,imageButton2;
 
-	@Override
-	public void ButtonActor()
-	{
-		TextureRegionDrawable button_basic=new TextureRegionDrawable(new TextureRegion());
-		TextureRegionDrawable button_basicRight=new TextureRegionDrawable(new TextureRegion());
-		imageButton=new ImageButton(button_basic);
-		imageButton2=new ImageButton(button_basicRight);
-		imageButton.setPosition(50,100);
-		imageButton2.setPosition(Gdx.graphics.getWidth()-50,100);
-		
-		// TODO: Implement this method
-		
-	}
 	
 	
 	
