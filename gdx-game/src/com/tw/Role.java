@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import android.media.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.math.*;
 
 public  class Role 
 {
@@ -19,6 +20,8 @@ public  class Role
 	static MyGdxGame public_resource;
 	static Picture_resources.Role picture_resource;
 
+	static Vector2 moving;
+	
 	ImageButton imageButton,imageButton2;
 
 	
@@ -26,14 +29,12 @@ public  class Role
 	
 	public Role()
 	{
-		//new Texture(Gdx.files.external("/storage/emulated/0/DCIM/Camera/IMG_20220801_121659.jpg"));
-
-		//role();
+		moving=new Vector2();
+		
 	}
 	public   static final void role()
 	{
 		int frame_rows=11,frame_cols=18;
-
 
 		Texture role_texture=picture_resource.role_resources[0];
 	 	int role_width=role_texture.getWidth() / frame_cols,role_height=role_texture.getHeight() / frame_rows;
@@ -52,7 +53,11 @@ public  class Role
 		}
 		movement = new Animation(0.05f, conversion);
 		movement.setPlayMode(Animation.PlayMode.LOOP);
-		final float 速度=1;
+	
+	
+		moving.x=0;
+		moving.y=300;
+		
 
 
 
@@ -72,7 +77,7 @@ public  class Role
 	//	int skill;
 		int speed=5;
 		String[] saying={"你干嘛～～～","厉不厉害你坤哥"};
-		public void bollKill(){
+		public  void bollKill(){
 			
 		}
 	}
