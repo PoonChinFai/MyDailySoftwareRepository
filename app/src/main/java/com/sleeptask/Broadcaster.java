@@ -5,35 +5,36 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.PowerManager;
 
-public class TimeManager  {
+public class Broadcaster  extends BroadcastReceiver
+{
+
+	@Override
+	public void onReceive(Context p1, Intent p2)
+	{
+		
+		temporary();
+	
+		// TODO: Implement this method
+	}
+	
 
 	public BroadcastReceiver broadcast;
-	Context context;
 	int countdown=0;
 	PowerManager screen_control;
 	PowerManager.WakeLock screen_lock;
 	
-	public TimeManager(Context context){
-		this.context=context;
+	public Broadcaster(){
+	
 		
 	
-		broadcast = new BroadcastReceiver(){
-
-	
-			@Override
-			public void onReceive(Context p1, Intent p2) {
-				temporary();
-			}
-
 		
-		};
-		screen_control=(PowerManager)context.getSystemService(Context.POWER_SERVICE);
+		screen_control=(PowerManager)MainActivity.context.getSystemService(Context.POWER_SERVICE);
 		screen_lock=screen_control.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK,"tag");
 		
 	}
 
 	public void temporary(){
-		new ToastPrompt(context).toast("Broadcast");
+		ToastPrompt.toast("Broadcast");
 	}
 
 	/*

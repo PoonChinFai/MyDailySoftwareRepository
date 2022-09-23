@@ -1,30 +1,22 @@
 package com.sleeptask;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
-import android.icu.text.SimpleDateFormat;
-import android.os.Build;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Date;
-import android.content.BroadcastReceiver;
+import android.app.*;
+import android.content.*;
+import android.graphics.*;
+import android.icu.text.*;
+import android.os.*;
+import android.view.*;
+import android.widget.*;
+import com.sleeptask.*;
+import java.io.*;
+import java.util.*;
+//import android.R;
 
-public class MainActivity extends Activity  {
+public class MainActivity extends Activity implements Runnable
+{
 
 
+	public static MainActivity context;
 
 	//-----------------------
 	String file_name = "/storage/emulated/0/SleepTask/SleepTask.txt";
@@ -44,19 +36,20 @@ public class MainActivity extends Activity  {
 	WindowManage winmanage;
 	TextView task_prompt;
 	BossServer bossserver;
-	ToastPrompt toastPrompt;
-	TimeManager timemanager;
-	
-	Intent intent;
-	
-	
-	IntentFilter filter = new IntentFilter();
-	
+	//static ToastPrompt ToastPrompt;
+	//TimeManager timemanager;
 
-	
-	
+	Intent intent;
+
+
+	IntentFilter filter = new IntentFilter();//动态注册屏幕广播
+
+
+
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState)  {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		//--------------///
 		setContentView(R.layout.activity_main);
@@ -65,79 +58,89 @@ public class MainActivity extends Activity  {
 		//--------------
 
 
-		
-		bossserver = new BossServer(this);
-		toastPrompt = new ToastPrompt(this);
-		//new TimeManager(this);
-		winmanage = new WindowManage();
-		winmanage.WindowManage(this);
-		timemanager=new TimeManager(this);
+
+
+		winmanage = new WindowManage();//悬浮窗实例化对象
+		winmanage.WindowManage(this);//调用方法创建悬浮窗,传入上下文对象
+		//timemanager=new TimeManager(this);
+		context = this;//声明，一个全局上下文变量
+		//new ThreadPool();
 		//-----------------
 
 		//--------------------
-		intent = new Intent(this, BossServer.class);
-		task_prompt = new TextView(this);
+		intent = new Intent(this, Notification.class);//实例化意图对象,传入上下文对象,服务
+		task_prompt = new TextView(this);//实例化控件对象，传入上下文对象
 		task_prompt.setTextColor(Color.BLACK);
 		task_prompt.setText("该睡觉了");
-		filter.addAction(Intent.ACTION_SCREEN_OFF);
-		
+		filter.addAction(Intent.ACTION_SCREEN_ON);
+
 		//---------------
 
 		databaseInit();
-		registerReceiver(timemanager.broadcast, filter);
-		
+		registerReceiver(new Broadcaster(), filter);//注册广播接收对象,传入注册者
 
+		//new ThreadPool();
 
-		dataDisplay();
+		new TimerOperator();
+		//startForegroundService();
+		startService(intent);
+		//dataDisplay();
 		//	new publicEvent(this).	publicEvent("frereopwir");
 		//-----------------
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-			//timeManager();
-			//toastPrompt.toast("正在运行");
-		} else {
-			toastPrompt.	toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
+		if (!(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N))
+		{
+
+
+			//System.out.println("ok    "+ToastPromp);
+			ToastPrompt.	toast("你的安卓系统过低，无法使用此功能" + "需要API:" + Build.VERSION.SDK_INT);
 		}
-		//	dataDisplay();
-		//fileManager();
+
 
 	}
 
 
 
-	public File getDirectory() {//获取文件夹
+
+	public File getDirectory()
+	{//获取文件夹
 		directory = new File(directory_name);
 		return directory;//返回文件夹引用
 	}
 
-	public File getFile() {//获取文件
+	public File getFile()
+	{//获取文件
 
 		file = new File(file_name);
 		return file;//返回文件引用
 	}
 
-	public String fileManager() {
+	public String fileManager()
+	{
 
 
-		try {
-
+		try
+		{
 
 
 			read_data = new BufferedReader(new InputStreamReader(file_input));
 
 
 
-			if ((exist_data = read_data.readLine()) != null) {
-				toastPrompt.toast("Data is  already loaded ");
-			} else {
-
-				read_data.reset();
+			if ((exist_data = read_data.readLine()) != null)
+			{
+				ToastPrompt.toast("Data is  already loaded ");
+				System.out.println("true");
 			}
-			//else if((exist_data=read_data.readLine()).equals(" ")){toastPrompt.toast("nul");}
+			else
+			{
 
-
-
-
-		} catch (IOException e) {
+				System.out.println(exist_data);
+				System.out.println("false");
+				//read_data.close();
+			}
+		}
+		catch (IOException e)
+		{
 		}
 
 
@@ -145,117 +148,183 @@ public class MainActivity extends Activity  {
 
 	}
 
-	public void display(View v) {
+	public void display(View v)
+	{
 
 		datalist = fileManager();
 
-		toastPrompt.	toast("666");
+		ToastPrompt.toast("已存入数据:" + datalist);
 		dateDisplay.setText(datalist);
 
 
 	}
+	/*
+	 public void dataDisplay()
+	 {
 
-	public void dataDisplay() {
-		new Thread(new Runnable() {//五秒自动刷新数据
-				@Override
-				public void run() {
+	 final Thread i=new Thread(new Runnable() {//五秒自动刷新数据
+	 @Override
+	 public void run()
+	 {
 
-					while (true) {
+	 while (true)
+	 {
 
 
 
-						runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
+	 runOnUiThread(new Runnable() {
+	 @Override
+	 public void run()
+	 {
 
-									datalist = fileManager();
-									dateDisplay.setText(datalist);
-								}
-							});
-						try {
-							Thread.sleep(5 * 1000);
-						} catch (InterruptedException e) {
-							throw new RuntimeException(e);
-						}
-					}
+	 datalist = fileManager();
+	 System.out.println("  ok       "+datalist);
+	 dateDisplay.setText(datalist);
+	 }
+	 });
+	 try
+	 {
+	 Thread.sleep(5 * 1000);
+	 }
+	 catch (InterruptedException e)
+	 {
+	 throw new RuntimeException(e);
+	 }
 
-				}
-			}).start();
+	 }
 
+	 }
+	 });
+
+	 i.start();
+	 new Thread(new Runnable(){
+
+	 @Override
+	 public void run()
+	 {
+	 while(true){
+	 System.out.println("    stop");
+	 if(datalist==null){i.stop();break;}
+	 // TODO: Implement this method
+	 }
+	 }
+
+
+	 }	).start();
+
+	 }
+
+	 */
+	public void openService(View v)
+	{
+		/*String id="666";
+		 String name="name";
+		 NotificationChannel channel=new NotificationChannel(id,name,NotificationManager.IMPORTANCE_LOW);
+
+		 intent=new Intent(this,Notification.class);
+		 PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+		 NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);//获取通知栏管理对象
+		 Notification.Builder builder=new Notification.Builder(this);//获取通知栏builder对象
+
+		 manager.createNotificationChannel(channel);
+
+
+		 //builder.setSmallIcon(R.id.delete);
+		 builder.setTicker("uploadservice");
+		 builder.setContentText("请保持程序在后台运行");
+		 builder.setWhen(System.currentTimeMillis());
+		 builder.setContentIntent(pendingIntent);
+
+		 Notification notification=builder.getNotification();
+		 manager.notify(0,notification);
+		 // startForeground(1,notification);
+		 ToastPrompt.toast("启动服务成功");
+		 */
 	}
-
-
-	public void openService(View v) {
-		new Thread(new Runnable(){
-
-				@Override
-				public void run() {
-					startService(intent);
-				}
-			});
-
-	}
-	public void closeService(View v) {
+	public void closeService(View v)
+	{
 
 		stopService(intent);
 	}
 
-	public void add_date(View v) {
+	public void add_date(View v)
+	{
+		//System.out.println("ok        "+ToastPrompt);
 		if (!getFile().exists())databaseInit();
 		String time_data = time_request.getText().toString();
 
 		write_data = new BufferedWriter(new OutputStreamWriter(file_output));
-		if (time_data.equals("")) {
-			toastPrompt.toast("时间为空");
-		} else if (!time_data.equals("")) {
+		if (time_data.equals(""))
+		{
+			ToastPrompt.toast("时间为空");
+			//System.out.println("ok    "+ToastPrompt);
+		}
+		else if (!time_data.equals(""))
+		{
 
 
-			try {
+			try
+			{
 				write_data.write(time_data);
 				write_data.newLine();
 				write_data.flush();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 			}
 
-			toastPrompt. toast("加入成功,时间为" + time_data);
+			ToastPrompt. toast("加入成功,时间为" + time_data);
+			//System.out.println("ok    "+ToastPrompt);
 
 		}
 
 
 	}
 
-	public void delete_data(View v) {
+	public void delete_data(View v)
+	{
 
-		if (getFile().exists()) {
+		if (getFile().exists())
+		{
 			getFile().delete();
-			toastPrompt.	toast("删除成功");
-		} else {
-			toastPrompt.	toast("文件夹为空");
+			ToastPrompt.	toast("删除成功");
+		}
+		else
+		{
+			ToastPrompt.	toast("文件夹为空");
 		}
 	}
 
-	public void databaseInit() {//数据库初始化
+	public void databaseInit()
+	{//数据库初始化
 
-		try {
+		try
+		{
 
 
-			if (getDirectory().exists() == false) {
+			if (!(getDirectory().exists()))
+			{
 				getDirectory().mkdir();
-				if (getFile().exists() == false) {
-
-					getFile().createNewFile();
-
-				}
-
-			} else if (getDirectory().exists()) {
-				if (!getFile().exists()) {
+				if (!(getFile().exists()))
+				{
 
 					getFile().createNewFile();
 
 				}
 
 			}
-			
+			else if (getDirectory().exists())
+			{
+				if (!getFile().exists())
+				{
+
+					getFile().createNewFile();
+
+				}
+
+			}
+
 			file_input = new FileInputStream(file_name);
 
 			file_output = new FileOutputStream(file_name, true);
@@ -267,71 +336,65 @@ public class MainActivity extends Activity  {
 			exist_data = read_data.readLine();
 
 
-			if (exist_data == null);// toastPrompt.toast("未配置时间");
+			if (exist_data == null) ToastPrompt.toast("未配置时间");
 
-		} catch (FileNotFoundException e) {
+		}
+		catch (FileNotFoundException e)
+		{
 
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 		}
 	}
 
 
-	public void getDate() {
+	public void getDate()
+	{
 
 	}
 
-	public void openSuspension() {//打开悬浮窗
+	public void openSuspension()
+	{//打开悬浮窗
 		winmanage.window.addView(task_prompt, winmanage.windowlayout);
 	}
 
-	public void closeSuspension() {//关闭悬浮窗
+	public void closeSuspension()
+	{//关闭悬浮窗
 		winmanage.window.removeView(task_prompt);
 	}
 
 
-	public void timeManager() {
-
-
-		final SimpleDateFormat dateformat = new SimpleDateFormat("HHmmss");
-
-
-		new Thread(new Runnable() {
-				@Override
-				public void run() {
-
-
-					while (true) {
-						runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									final	int timeformat = Integer.parseInt(dateformat.format(new Date()));
-									if (timeformat == 105200) {
-										openSuspension();
-									}
-									if (timeformat == 105500) {
-										closeSuspension();
-									}
-
-								}
-							});
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							throw new RuntimeException(e);
-						}
-					}
-
-
-				}
-			}).start();
-	}
-
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
 		startService(intent);
 		super.onDestroy();
 
 	}
+
+	@Override
+	public void run()
+	{
+
+		final SimpleDateFormat dateformat = new SimpleDateFormat("HHmmss");
+		int timeformat = Integer.parseInt(dateformat.format(new Date()));
+		if (timeformat == 154700)
+		{
+			openSuspension();
+		}
+		if (timeformat == 155000)
+		{
+			closeSuspension();
+		}
+
+		// TODO: Implement this method
+	}
+
+
+
+
+
 
 
 
